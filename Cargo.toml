@@ -1,0 +1,16 @@
+[package]
+name = "auto_deploy_dockers"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = { version = "0.6.6",features=["headers"] }
+serde = { version = "1.0.152",features=["derive"] }
+serde_json = "1.0.93"
+time = {version = "0.3.19",features = ["macros"]}
+tokio = {version = "1.25.0",features = ["full"]}
+tracing = "0.1.37"
+tracing-appender = "0.2.2"
+tracing-subscriber = {version = "0.3.16",features = ["env-filter", "time", "local-time"] }
