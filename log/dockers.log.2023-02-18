@@ -1,0 +1,4 @@
+2023-02-18 23:34:45.168  INFO ThreadId(05) auto_deploy_dockers::router: 37: [traceId = ] message >>>>>>>> None
+2023-02-18 23:34:45.168  INFO ThreadId(05) auto_deploy_dockers::router: 51: [traceId = ] message status_code---200 OK
+2023-02-18 23:42:14.682  INFO ThreadId(02) auto_deploy_dockers::router: 45: [traceId = ] message >>>>>>>> None
+2023-02-18 23:42:14.682  INFO ThreadId(02) auto_deploy_dockers::router: 59: [traceId = ] message status_code---400 Bad Request

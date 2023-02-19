@@ -1,15 +1,15 @@
+//! 容器客户端
+//!
+//! Auth: Mr.Wht
+//! Date: 2023/02/18
+//! Description: 容器客户端
+//! ```
 
 use std::cell::RefCell;
 use std::net::SocketAddr;
+
 use time::UtcOffset;
 use time::macros::format_description;
-
-use axum::{
-    routing::{get, post},
-    http::StatusCode,
-    Json, Router,
-};
-use serde::{Deserialize, Serialize};
 use tracing_appender::non_blocking;
 use tracing_appender::rolling::{RollingFileAppender, Rotation};
 use tracing_subscriber::field::MakeExt;
@@ -18,6 +18,12 @@ use tracing_subscriber::fmt::time::OffsetTime;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{fmt, EnvFilter, Registry};
+
+pub mod router;
+pub mod common;
+pub mod api;
+pub mod service;
+pub mod schema;
 
 thread_local!(static TRACE: RefCell<String> = RefCell::new(String::default()));
 
@@ -69,51 +75,9 @@ async fn main() {
         .init();
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    let app = Router::new()
-        // `GET /` goes to `root`
-        .route("/", get(root))
-        // `POST /users` goes to `create_user`
-        .route("/users", post(create_user));
+    println!("{:?}",addr);
     axum::Server::bind(&addr)
-        .serve(app.into_make_service())
+        .serve(router::api_router().into_make_service())
         .await
         .unwrap();
-
-
-    println!("Hello, world!");
-}
-
-
-// basic handler that responds with a static string
-async fn root() -> &'static str {
-    "Hello, World!"
-}
-
-async fn create_user(
-    // this argument tells axum to parse the request body
-    // as JSON into a `CreateUser` type
-    Json(payload): Json<CreateUser>,
-) -> (StatusCode, Json<User>) {
-    // insert your application logic here
-    let user = User {
-        id: 1337,
-        username: payload.username,
-    };
-
-    // this will be converted into a JSON response
-    // with a status code of `201 Created`
-    (StatusCode::CREATED, Json(user))
-}
-
-// the input to our `create_user` handler
-#[derive(Deserialize)]
-struct CreateUser {
-    username: String,
-}
-
-// the output to our `create_user` handler
-#[derive(Serialize)]
-struct User {
-    id: u64,
-    username: String,
 }

@@ -6,11 +6,19 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = { version = "0.6.6",features=["headers"] }
+async-trait = "0.1.64"
+axum = { version = "0.6.6",features=["headers","multipart"] }
+bollard = "0.14.0"
+flate2 = "1.0.25"
+futures-util = "0.3.26"
+hyper = {version = "0.14.24",features = ["default","stream"]}
 serde = { version = "1.0.152",features=["derive"] }
 serde_json = "1.0.93"
+tar = "0.4.38"
 time = {version = "0.3.19",features = ["macros"]}
 tokio = {version = "1.25.0",features = ["full"]}
+tokio-util = "0.7.7"
+tower = "0.4.13"
 tracing = "0.1.37"
 tracing-appender = "0.2.2"
 tracing-subscriber = {version = "0.3.16",features = ["env-filter", "time", "local-time"] }
