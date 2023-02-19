@@ -88,7 +88,7 @@ where
     type Rejection = (StatusCode,String);
 
     async fn from_request(req: Request<B>, state: &S) -> Result<Self, Self::Rejection> {
-        // println!("****** {:?}",req.headers());
+        tracing::info!("****** {:?}",req.headers());
         let bytes =  Bytes::from_request(req, state).await.map_err(|e| (StatusCode::BAD_REQUEST,e.to_string()))?;
         let str = String::from_utf8(bytes.to_vec()).map_err(|e| (StatusCode::BAD_REQUEST,e.to_string()))?;
         let data:T = serde_json::from_str(&str).map_err(|e| (StatusCode::BAD_REQUEST,e.to_string()))?;

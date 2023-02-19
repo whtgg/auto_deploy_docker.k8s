@@ -19,6 +19,8 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{fmt, EnvFilter, Registry};
 
+use common::CONF;
+
 pub mod router;
 pub mod common;
 pub mod api;
@@ -29,7 +31,6 @@ thread_local!(static TRACE: RefCell<String> = RefCell::new(String::default()));
 
 #[tokio::main]
 async fn main() {
-
     // 自定义日志中的traceId格式
     let formatter = format::debug_fn(|writer, field, value| {
         TRACE.with(|f| write!(writer, "[traceId = {}] {} {:?}", *f.borrow(), field, value))
@@ -74,8 +75,8 @@ async fn main() {
         .with(file_layer)
         .init();
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    println!("{:?}",addr);
+    let addr = CONF.server.addr.parse::<SocketAddr>().unwrap();
+    tracing::info!("addr---{}",addr);
     axum::Server::bind(&addr)
         .serve(router::api_router().into_make_service())
         .await

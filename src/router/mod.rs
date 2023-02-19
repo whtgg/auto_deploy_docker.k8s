@@ -7,12 +7,10 @@
 
 use std::{convert::Infallible, borrow::Cow};
 
-use axum::{Router,routing::{get,post},body::{BoxBody, HttpBody, Body}, response::{IntoResponse,Response}, middleware::{from_fn, Next}, http::{Request, StatusCode, Uri}};
+use axum::{Router,routing::{get,post},body::{BoxBody, HttpBody}, response::{IntoResponse,Response}, http::{StatusCode, Uri}};
 use tower::util::AndThenLayer;
-use serde::Deserialize;
 
 use crate::common::resp::api_resp_fail;
-use crate::common::errors::Result;
 use crate::api::docker::*;
 
 pub fn api_router() -> Router{
@@ -25,28 +23,11 @@ pub fn api_router() -> Router{
         .route("/exec",post(exec))
         .route("/state",get(state))
         .layer(AndThenLayer::new(map_response))
-        .layer(from_fn(request_auth_token))
         .fallback(fallback)
-}
-
-
-#[derive(Deserialize,Debug)]
-pub struct Hello {
-    pub username: String,
 }
 
 async fn fallback(_uri: Uri) -> impl IntoResponse {
     api_resp_fail::<String>(StatusCode::NOT_FOUND.as_u16() as u32, "请求接口不存在").into_response()
-}
-
-async fn request_auth_token(req:Request<Body>,next:Next<Body>) -> Result<impl IntoResponse, Response> 
-{
-    let headers = req.headers();
-    let token = headers.get("token");
-    if token.is_some() &&  token.unwrap().to_str().unwrap().eq("ok") {
-        return Ok(api_resp_fail::<String>(500, "").into_response());
-    }
-    Ok(next.run(req).await)
 }
 
 
